@@ -34,4 +34,7 @@ __CONFIG(12, EBTR0_OFF & EBTR1_OFF & EBTR2_OFF & EBTR3_OFF);
 // CONFIG7H - No boot block table read protection
 __CONFIG(13, EBTRB_OFF);
 
+#define FORCE_INCLUDE(fn) \
+    do { if (0) { keyboard_status_t __ks = {0}; fn(__ks); } } while (0)
+
 #endif

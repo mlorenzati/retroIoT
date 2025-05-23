@@ -15,9 +15,9 @@ void display_handler(void) {
         *display_index = 0;
     }
     // Prepare in ON 1 of the segments and make output only that one
-    char display_activation = 1 << (*display_index);
+    unsigned char display_activation = ~(1 << (*display_index));
     DISPLAY_INDEX_PORT_LATCH = display_activation;
-    DISPLAY_INDEX_PORT_DIRECTION = (~(display_activation)) | DISPLAY_INDEX_PORT_MASK;
+    DISPLAY_INDEX_PORT_DIRECTION = display_activation | DISPLAY_INDEX_PORT_MASK;
     DISPLAY_SEGMENTS_LATCH = display_buffer[*display_index];
 }
 

@@ -54,3 +54,14 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+/PIC18/watch/.vscode
+*.p1
+PIC18/watch/htplug-out111.tmp
+PIC18/watch/watch.sym
+PIC18/watch/watch.sdb
+PIC18/watch/watch.rlf
+PIC18/watch/startup.lst
+PIC18/watch/startup.rlf
+PIC18/watch/watch.cof
+PIC18/watch/watch.hxl
+PIC18/watch/watch.lst
