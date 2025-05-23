@@ -24,6 +24,10 @@ void on_keyboard_pressed(keyboard_status_t keys) {
 }
 
 void peripheral_init(void) {
+	// General: ADCs disabled, all RA are digital
+	ADCON0 = 0;
+	ADCON1 = 0x07;	
+
 	// Timer 0 Init
 	timer0_init();
 
