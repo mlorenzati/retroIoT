@@ -3,6 +3,7 @@
 #include "timer.h"
 #include "display.h"
 #include "keyboard.h"
+#include "clock.h"
 
 void interrupt isr(void){
 	timer0_handler();
@@ -11,16 +12,47 @@ void interrupt isr(void){
 char display_key_index = 0;
 // Keyboard pressed handler
 void on_keyboard_pressed(keyboard_status_t keys) {
-    for (char key_idx = 0; key_idx < KEY_INDEX_MAX; key_idx++) {
-        key_value key = get_key_from(keys, key_idx);
-        if (key == key_pressed) {
-            display_update_index(DISPLAY_NUM_0, key_idx);
-        } else if (key == key_released) {
-            display_update_index(DISPLAY_NUM_1, key_idx);
-        } else if (key == key_repeat) {
-            display_update_index(DISPLAY_NUM_2, key_idx);
-        }
-    }
+	char hour;
+	char minute;
+	char seconds;
+	clock_get_hms(&hour, &minute, &seconds);
+
+    if (keys.key1 == key_released) {
+		hour += 10;
+	}
+	if (keys.key2 == key_released) {
+		hour += 1;
+	}
+	if (keys.key3 == key_released) {
+		minute += 10;
+	}
+	if (keys.key4 == key_released) {
+		minute += 1;
+	}
+	if (keys.key5 == key_released) {
+		seconds += 10;
+	}
+	if (keys.key6 == key_released) {
+		seconds += 1;
+	}
+
+	clock_set_hms(hour, minute, seconds);
+}
+
+unsigned char hold_clock_seconds;
+void on_updated_hms(char clock_hours, char clock_minutes, char clock_seconds) {
+	if (hold_clock_seconds > 0) {
+		display_update_segment(SEG_DP, true, hold_clock_seconds - 1);
+		hold_clock_seconds--;
+		return;
+	}
+	display_number_2_7_seg(clock_hours, 0, 2);
+	display_number_2_7_seg(clock_minutes, 2, 2);
+	display_number_2_7_seg(clock_seconds, 4, 2);
+}
+
+void on_alarm_triggered(char alarm_index) {
+	
 }
 
 void peripheral_init(void) {
@@ -34,9 +66,12 @@ void peripheral_init(void) {
 	// Display Init, shares display_key_index as multiplexor index
 	display_init(&display_key_index);
 
-	// Keyboard Init, requires help to force function to avoid being removed by optimization
-	FORCE_INCLUDE(on_keyboard_pressed);
-	keyboard_init(&display_key_index, 200, 80, on_keyboard_pressed);
+	// 24 hs clock initialization
+	on_alarm_triggered(0); // Force linkeage and inclusion of method
+	clock_init(true /*24 hs mode*/, on_updated_hms, on_alarm_triggered);
+
+	// Keyboard Init
+	keyboard_init(&display_key_index, 28 /* 28 * 30ms = 840ms for repeat*/, 14 /* 13 * 30ms for repeat fast*/ , on_keyboard_pressed);
 
 	// Enable peripheral and global interrupts
 	PEIE = 1;
@@ -48,8 +83,10 @@ void main(void) {
 	const unsigned char msg[DISPLAY_INDEX_MAX] = { 
 		DISPLAY_CHR_H, DISPLAY_CHR_E, DISPLAY_CHR_L, DISPLAY_CHR_L, DISPLAY_CHR_O, DISPLAY_CHR_EXCLAMATION
 	};
+	hold_clock_seconds = 6;
 	display_update_all(msg, false);
     while (1) {
         keyboard_event_loop();
+		clock_event_loop();
     }
 }

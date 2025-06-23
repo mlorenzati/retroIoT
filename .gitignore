@@ -65,3 +65,9 @@ PIC18/watch/startup.rlf
 PIC18/watch/watch.cof
 PIC18/watch/watch.hxl
 PIC18/watch/watch.lst
+*.cof
+*.hxl
+*.lst
+*.rlf
+*.sdb
+*.sym

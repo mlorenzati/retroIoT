@@ -35,7 +35,7 @@ typedef union {
 
 #define KEYBOARD_PIN_DIRECTION  TRISA0
 #define KEYBOARD_PIN_VALUE      RA0
-#define KEYBOARD_THRESHOLD 5
+#define KEYBOARD_THRESHOLD 4
 #define KEY_INDEX_MAX 6
 #define KEY_COUNT_INIT { 0, 0, 0, 0, 0, 0 }
 
@@ -43,7 +43,7 @@ key_value get_key_from(keyboard_status_t keys, char key_idx);
 
 typedef void (*keyboard_callback)(keyboard_status_t);
 
-void keyboard_init(const char *key_idx, char repeat_rate_5ms, char repeat_rate_acel, keyboard_callback callback);
+void keyboard_init(const char *key_idx, char repeat_rate_30ms, char repeat_rate_30ms_fast, keyboard_callback callback);
 void keyboard_event_loop(void);
 keyboard_status_t get_last_keyboard_status(void);
 

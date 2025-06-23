@@ -5,6 +5,10 @@
 char *display_index = NULL;
 unsigned char display_buffer[DISPLAY_INDEX_MAX];
 
+const unsigned char numbers_7_seg[10] = {
+    DISPLAY_NUM_0, DISPLAY_NUM_1, DISPLAY_NUM_2, DISPLAY_NUM_3, DISPLAY_NUM_4, DISPLAY_NUM_5, DISPLAY_NUM_6, DISPLAY_NUM_7, DISPLAY_NUM_8, DISPLAY_NUM_9
+};
+
 void display_handler(void) {
     // Caller by the IRQ timer periodically, fast
     if (display_index == NULL) {
@@ -52,5 +56,32 @@ void display_update_all(const unsigned char* data, bool reverse) {
     for (char i = 0; i < DISPLAY_INDEX_MAX; i++) {
         unsigned char data_index = reverse ? DISPLAY_INDEX_MAX - 1 - i : i;
         display_buffer[i] = data[data_index];
+    }
+}
+
+void display_number_2_7_seg(int number, char index, char size) {
+    if (index >= DISPLAY_INDEX_MAX) {
+        // Index is above the max size
+        return;
+    }
+    int max_size = DISPLAY_INDEX_MAX - index;
+    size = size > max_size ? max_size : size;
+    for (signed char idx = index + size - 1; idx >= index; idx--) {
+        int mod = number % 10;
+        number -= mod;
+		number /= 10;
+        display_update_index(numbers_7_seg[mod], idx);
+    }
+}
+
+void display_update_segment(char segment_id, bool value, char index) {
+    if (index >= DISPLAY_INDEX_MAX) {
+        // Index is above the max size
+        return;
+    }
+    if (value) {
+        display_buffer[index] &= segment_id;
+    } else {
+        display_buffer[index] |= ~segment_id;
     }
 }

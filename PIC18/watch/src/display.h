@@ -25,10 +25,10 @@
 #define DISPLAY_NUM_1 (SEG_B & SEG_C)
 #define DISPLAY_NUM_2 (SEG_G & SEG_A & SEG_B & SEG_E & SEG_D)
 #define DISPLAY_NUM_3 (SEG_G & SEG_A & SEG_B & SEG_D & SEG_C)
-#define DISPLAY_NUM_4 (SEG_G & SEG_G & SEG_B & SEG_C)
+#define DISPLAY_NUM_4 (SEG_F & SEG_G & SEG_B & SEG_C)
 #define DISPLAY_NUM_5 (SEG_F & SEG_G & SEG_A & SEG_D & SEG_C)
 #define DISPLAY_NUM_6 (SEG_F & SEG_G & SEG_A & SEG_E & SEG_D & SEG_C)
-#define DISPLAY_NUM_7 (SEG_A & SEG_B & SEG_B)
+#define DISPLAY_NUM_7 (SEG_A & SEG_B & SEG_C)
 #define DISPLAY_NUM_8 (SEG_F & SEG_G & SEG_A & SEG_B & SEG_E & SEG_D & SEG_C)
 #define DISPLAY_NUM_9 (SEG_F & SEG_G & SEG_A & SEG_B & SEG_D & SEG_C)
 
@@ -78,6 +78,8 @@
 
 void display_init(char *display_index);
 // Data should be larger or equal in size to DISPLAY_INDEX_MAX
+void display_update_segment(char segment_id, bool value, char index);
 void display_update_all(const unsigned char* data, bool reverse);
 void display_update_index(unsigned char data, char index);
+void display_number_2_7_seg(int number, char index, char size);
 #endif
