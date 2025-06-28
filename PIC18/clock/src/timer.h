@@ -1,15 +1,24 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-// Clock 18.432 Mhz => Instruction Clock 4.608 Mhz
-// Using a 256x prescaler we have 18000 ticks per second
-// For 5ms -> 65536 - 90 = 65446 (0xFFA6) (+ 1 from overflow) -> (0xFFA7)
-#define TMRH_PRESCALER 0b111  // 256X prescaler
-#define TMRH_5MS 0xFF
-#define TMRL_5MS 0xA6
+// Clock 18.432 Mhz => Instruction Clock = Clock / 4 = 4.608 Mhz
+// In Timer 0, Using a 256x prescaler we have 18000 ticks per second
+// For 500ms -> 65536 - 9000 = 56536 (0xDCD8)
+
+// Timer 0
+#define TMR0_PRESCALER 0b111  // 256X prescaler
+#define TMR0H_500MS    0xDC
+#define TMR0L_500MS    0xD8
+
+// In Timer 1, Using a 8x prescaler we have 576000 ticks per second
+// For 5ms -> 65536 - 2880 =  (0xF4C0)
+#define TMR1_PRESCALER 0b00110000 //8X
+#define TMR1H_5MS      0xF4
+#define TMR1L_5MS      0xC0
 
 // Maximum number of callbacks
-#define TIMER0_CALLBACK_MAX 3
+#define TIMER0_CALLBACK_MAX 1
+#define TIMER1_CALLBACK_MAX 2
 
 #if TIMER0_CALLBACK_MAX == 1
   #define TIMER0_CALLBACK_INIT { NULL }
@@ -23,10 +32,25 @@
   #error "TIMER0_CALLBACK_MAX not supported yet for that size"
 #endif
 
-typedef void(*timer0_callback)(void);
+#if TIMER1_CALLBACK_MAX == 1
+  #define TIMER1_CALLBACK_INIT { NULL }
+#elif TIMER1_CALLBACK_MAX == 2
+  #define TIMER1_CALLBACK_INIT { NULL, NULL }
+#elif TIMER1_CALLBACK_MAX == 3
+  #define TIMER1_CALLBACK_INIT { NULL, NULL, NULL }
+#elif TIMER1_CALLBACK_MAX == 4
+  #define TIMER1_CALLBACK_INIT { NULL, NULL, NULL, NULL }
+#else
+  #error "TIMER1_CALLBACK_MAX not supported yet for that size"
+#endif
+
+typedef void(*timer_callback)(void);
 
 void timer0_init(void);
-int  timer0_register_callback(timer0_callback callback);
+void timer1_init(void);
+int  timer0_register_callback(timer_callback callback);
+int  timer1_register_callback(timer_callback callback);
 void timer0_handler(void);
+void timer1_handler(void);
 
 #endif

@@ -1,24 +1,24 @@
 #include "clock.h"
 #include "timer.h"
 #include <stddef.h>
+#include <stdbool.h>
 
 // By default 24 hs format
 bool clock_format_24_12_h    = true;
+bool clock_half_second_cnt   = false;
 bool clock_second_event      = false;
 bool clock_half_second_event = false;
-char clock_hours, clock_minutes, clock_seconds, clock_millisec_5;
+char clock_hours, clock_minutes, clock_seconds;
 clock_callback hms_callback = NULL;
 clock_alarm_callback alarm_callback = NULL;
 
 void clock_handler(void) {
-    if (++clock_millisec_5 < CLOCK_MSSECOND_CNT) {
-        if (clock_millisec_5 == CLOCK_MSHALFSEC_CNT) {
-            clock_half_second_event = true;
-        }
-        return;
+    clock_half_second_cnt = !clock_half_second_cnt;
+    if (clock_half_second_cnt) {
+        clock_half_second_event = true;
+    } else {
+        clock_second_event = true;
     }
-    clock_millisec_5 = 0;
-    clock_second_event = true;
 }
 
 void clock_init(bool _clock_format_24_12_h, clock_callback _hms_callback, clock_alarm_callback _alarm_callback) {
@@ -29,7 +29,7 @@ void clock_init(bool _clock_format_24_12_h, clock_callback _hms_callback, clock_
     clock_hours = 0;
     clock_minutes = 0;
     clock_seconds = 0;
-    clock_millisec_5 = 0;
+    clock_half_second_cnt = false;
 
     // Register callbacks
     hms_callback = _hms_callback;

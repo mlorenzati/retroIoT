@@ -2,8 +2,6 @@
 #define CLOCK_H
 #include <stdbool.h>
 
-#define CLOCK_MSSECOND_CNT  200
-#define CLOCK_MSHALFSEC_CNT 100
 #define CLOCK_SECOND_CNT    60
 #define CLOCK_MINUTE_CNT    60
 #define CLOCK_HOUR_CNT      24

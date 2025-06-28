@@ -42,7 +42,7 @@ void display_init(char *idx) {
     display_index = idx;
 
     // Register interrupt handler
-    timer0_register_callback(display_handler);
+    timer1_register_callback(display_handler);
 }
 
 void display_update_index(unsigned char data, char index) {

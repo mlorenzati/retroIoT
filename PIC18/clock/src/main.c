@@ -7,6 +7,7 @@
 
 void interrupt isr(void){
 	timer0_handler();
+	timer1_handler();
 }
 
 char display_key_index = 0;
@@ -65,7 +66,6 @@ void on_updated_hms(char clock_hours, char clock_minutes, char clock_seconds, bo
 }
 
 void on_alarm_triggered(char alarm_index) {
-	
 }
 
 void peripheral_init(void) {
@@ -73,8 +73,9 @@ void peripheral_init(void) {
 	ADCON0 = 0;
 	ADCON1 = 0x07;	
 
-	// Timer 0 Init
+	// Timer 0 & Timer 1 Init 
 	timer0_init();
+	timer1_init();
 
 	// Display Init, shares display_key_index as multiplexor index
 	display_init(&display_key_index);

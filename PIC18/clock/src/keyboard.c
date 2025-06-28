@@ -98,7 +98,7 @@ void keyboard_init(const char *key_idx, char _repeat_rate_30ms, char _repeat_rat
     repeat_rate_30ms_fast = _repeat_rate_30ms_fast;
 
     // Register interrupt handler
-    timer0_register_callback(keyboard_handler);
+    timer1_register_callback(keyboard_handler);
 }
 
 void keyboard_event_loop(void) {
