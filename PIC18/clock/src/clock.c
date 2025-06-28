@@ -3,14 +3,18 @@
 #include <stddef.h>
 
 // By default 24 hs format
-bool clock_format_24_12_h = true;
-bool clock_second_event = false;
+bool clock_format_24_12_h    = true;
+bool clock_second_event      = false;
+bool clock_half_second_event = false;
 char clock_hours, clock_minutes, clock_seconds, clock_millisec_5;
 clock_callback hms_callback = NULL;
 clock_alarm_callback alarm_callback = NULL;
 
 void clock_handler(void) {
     if (++clock_millisec_5 < CLOCK_MSSECOND_CNT) {
+        if (clock_millisec_5 == CLOCK_MSHALFSEC_CNT) {
+            clock_half_second_event = true;
+        }
         return;
     }
     clock_millisec_5 = 0;
@@ -36,7 +40,11 @@ void clock_init(bool _clock_format_24_12_h, clock_callback _hms_callback, clock_
 }
 
 void clock_event_loop(void) {
-    if (!clock_second_event) {
+    if (clock_half_second_event) {
+        hms_callback(clock_hours, clock_minutes, clock_seconds, clock_half_second_event);
+        clock_half_second_event = false;
+        return;
+    } else if (!clock_second_event) {
         return;
     }
 
@@ -59,7 +67,7 @@ void clock_event_loop(void) {
     
     // On updated h:m:s 
     if (hms_callback) {
-        hms_callback(clock_hours, clock_minutes, clock_seconds);
+        hms_callback(clock_hours, clock_minutes, clock_seconds, clock_half_second_event);
     }
 
     //Check alarm logic (TBD)
@@ -79,5 +87,4 @@ void clock_set_hms(char hour, char minute, char seconds) {
     clock_minutes = mod_minute;
     hour += (minute / 60);
     clock_hours = hour % 24;
-    
 }

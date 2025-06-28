@@ -67,6 +67,71 @@ ToolArgsString=ËÓTknown C9=2,1
 TraceCmdString=
 DebugOptions=
 [File005]
+Location=Z:\retroIoT\PIC18\clock\keyboard.p1
+Folder=Intermediary
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File006]
+Location=Z:\retroIoT\PIC18\clock\main.p1
+Folder=Intermediary
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File007]
+Location=Z:\retroIoT\PIC18\clock\timer.p1
+Folder=Intermediary
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File008]
+Location=Z:\retroIoT\PIC18\clock\display.p1
+Folder=Intermediary
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File009]
+Location=Z:\retroIoT\PIC18\clock\clock.p1
+Folder=Intermediary
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File010]
 Location=Z:\retroIoT\PIC18\watch\alarmClock.cof
 Folder=Output
 DeviceName=PIC18F252
@@ -79,7 +144,7 @@ SuiteArgsString=
 ToolArgsString=ËÓTknown C9=2,1
 TraceCmdString=
 DebugOptions=
-[File006]
+[File011]
 Location=Z:\retroIoT\PIC18\watch\alarmClock.hex
 Folder=Output
 DeviceName=PIC18F252
@@ -92,7 +157,7 @@ SuiteArgsString=
 ToolArgsString=ËÓTknown C9=2,1
 TraceCmdString=
 DebugOptions=
-[File007]
+[File012]
 Location=Z:\retroIoT\PIC18\watch\alarmClock.sym
 Folder=Output
 DeviceName=PIC18F252
@@ -105,7 +170,7 @@ SuiteArgsString=
 ToolArgsString=ËÓTknown C9=2,1
 TraceCmdString=
 DebugOptions=
-[File008]
+[File013]
 Location=Z:\retroIoT\PIC18\watch\alarmClock.map
 Folder=Output
 DeviceName=PIC18F252
@@ -118,7 +183,7 @@ SuiteArgsString=
 ToolArgsString=ËÓTknown C9=2,1
 TraceCmdString=
 DebugOptions=
-[File009]
+[File014]
 Location=Z:\retroIoT\PIC18\watch\alarmClock.hxl
 Folder=Output
 DeviceName=PIC18F252
@@ -131,7 +196,7 @@ SuiteArgsString=
 ToolArgsString=ËÓTknown C9=2,1
 TraceCmdString=
 DebugOptions=
-[File010]
+[File015]
 Location=Z:\retroIoT\PIC18\watch\startup.lst
 Folder=Output
 DeviceName=PIC18F252
@@ -144,7 +209,7 @@ SuiteArgsString=
 ToolArgsString=ËÓTknown C9=2,1
 TraceCmdString=
 DebugOptions=
-[File011]
+[File016]
 Location=Z:\retroIoT\PIC18\watch\startup.rlf
 Folder=Output
 DeviceName=PIC18F252
@@ -157,7 +222,7 @@ SuiteArgsString=
 ToolArgsString=ËÓTknown C9=2,1
 TraceCmdString=
 DebugOptions=
-[File012]
+[File017]
 Location=Z:\retroIoT\PIC18\watch\doprnt.p1
 Folder=Output
 DeviceName=PIC18F252
@@ -170,7 +235,7 @@ SuiteArgsString=
 ToolArgsString=ËÓTknown C9=2,1
 TraceCmdString=
 DebugOptions=
-[File013]
+[File018]
 Location=Z:\retroIoT\PIC18\watch\doprnt.pre
 Folder=Output
 DeviceName=PIC18F252
@@ -183,7 +248,7 @@ SuiteArgsString=
 ToolArgsString=ËÓTknown C9=2,1
 TraceCmdString=
 DebugOptions=
-[File014]
+[File019]
 Location=Z:\retroIoT\PIC18\watch\alarmClock.obj
 Folder=Output
 DeviceName=PIC18F252
@@ -196,7 +261,7 @@ SuiteArgsString=
 ToolArgsString=ËÓTknown C9=2,1
 TraceCmdString=
 DebugOptions=
-[File015]
+[File020]
 Location=Z:\retroIoT\PIC18\watch\alarmClock.lst
 Folder=Output
 DeviceName=PIC18F252
@@ -209,7 +274,7 @@ SuiteArgsString=
 ToolArgsString=ËÓTknown C9=2,1
 TraceCmdString=
 DebugOptions=
-[File016]
+[File021]
 Location=Z:\retroIoT\PIC18\watch\alarmClock.rlf
 Folder=Output
 DeviceName=PIC18F252
@@ -222,8 +287,177 @@ SuiteArgsString=
 ToolArgsString=ËÓTknown C9=2,1
 TraceCmdString=
 DebugOptions=
-[File017]
+[File022]
 Location=Z:\retroIoT\PIC18\watch\alarmClock.sdb
+Folder=Output
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File023]
+Location=Z:\retroIoT\PIC18\clock\alarmClock.cof
+Folder=Output
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File024]
+Location=Z:\retroIoT\PIC18\clock\alarmClock.hex
+Folder=Output
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File025]
+Location=Z:\retroIoT\PIC18\clock\alarmClock.sym
+Folder=Output
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File026]
+Location=Z:\retroIoT\PIC18\clock\alarmClock.map
+Folder=Output
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File027]
+Location=Z:\retroIoT\PIC18\clock\alarmClock.hxl
+Folder=Output
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File028]
+Location=Z:\retroIoT\PIC18\clock\startup.lst
+Folder=Output
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File029]
+Location=Z:\retroIoT\PIC18\clock\startup.rlf
+Folder=Output
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File030]
+Location=Z:\retroIoT\PIC18\clock\doprnt.p1
+Folder=Output
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File031]
+Location=Z:\retroIoT\PIC18\clock\doprnt.pre
+Folder=Output
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File032]
+Location=Z:\retroIoT\PIC18\clock\alarmClock.obj
+Folder=Output
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File033]
+Location=Z:\retroIoT\PIC18\clock\alarmClock.lst
+Folder=Output
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File034]
+Location=Z:\retroIoT\PIC18\clock\alarmClock.rlf
+Folder=Output
+DeviceName=PIC18F252
+LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}
+LanguageToolID={0F51667C-2BAF-4EF8-A2C9-AB83788A793D}
+LanguageToolLocation=C:\Program Files (x86)\HI-TECH Software\PICC-18\PRO\9.66\bin\picc18.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|src\keyboard.c|src\main.c|src\timer.c|src\display.c|src\clock.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=ËÓTknown C9=2,1
+TraceCmdString=
+DebugOptions=
+[File035]
+Location=Z:\retroIoT\PIC18\clock\alarmClock.sdb
 Folder=Output
 DeviceName=PIC18F252
 LanguageToolSuiteID={507D93FD-16F1-4270-980F-0C7C0207E6D3}

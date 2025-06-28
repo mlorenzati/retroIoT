@@ -4,8 +4,9 @@
 // Clock 18.432 Mhz => Instruction Clock 4.608 Mhz
 // Using a 256x prescaler we have 18000 ticks per second
 // For 5ms -> 65536 - 90 = 65446 (0xFFA6) (+ 1 from overflow) -> (0xFFA7)
+#define TMRH_PRESCALER 0b111  // 256X prescaler
 #define TMRH_5MS 0xFF
-#define TMRL_5MS 0xA7
+#define TMRL_5MS 0xA6
 
 // Maximum number of callbacks
 #define TIMER0_CALLBACK_MAX 3

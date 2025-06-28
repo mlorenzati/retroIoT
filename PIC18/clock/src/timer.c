@@ -3,9 +3,9 @@
 #include <htc.h>
 
 void timer0_init(void) {
-	T0CON = 0b00000011; // 16-bit mode, internal clock, prescaler 1:16
-    TMR0H = TMRH_5MS;  // High byte preload
-    TMR0L = TMRL_5MS;  // Low byte preload
+	T0CON = TMRH_PRESCALER; // 16-bit mode, internal clock, prescaler 1:16
+    TMR0H = TMRH_5MS;   // High byte preload
+    TMR0L = TMRL_5MS;   // Low byte preload
     TMR0IF = 0;         // Clear interrupt flag
     TMR0ON = 1;         // Turn on Timer0
 	TMR0IE = 1;			// Enable timer 0 interrupts

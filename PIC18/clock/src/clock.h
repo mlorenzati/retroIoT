@@ -3,13 +3,14 @@
 #include <stdbool.h>
 
 #define CLOCK_MSSECOND_CNT  200
+#define CLOCK_MSHALFSEC_CNT 100
 #define CLOCK_SECOND_CNT    60
 #define CLOCK_MINUTE_CNT    60
 #define CLOCK_HOUR_CNT      24
 #define CLOCK_ALARM_CNT     6
 
 typedef void (*clock_alarm_callback)(char);
-typedef void (*clock_callback)(char, char, char);
+typedef void (*clock_callback)(char, char, char, bool);
 
 void clock_init(bool clock_format_24_12_h, clock_callback hms_callback, clock_alarm_callback alarm_callback);
 char clock_set_alarm(char hour, char minute, char seconds);

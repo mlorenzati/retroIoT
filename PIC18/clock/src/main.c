@@ -40,15 +40,28 @@ void on_keyboard_pressed(keyboard_status_t keys) {
 }
 
 unsigned char hold_clock_seconds;
-void on_updated_hms(char clock_hours, char clock_minutes, char clock_seconds) {
+void on_updated_hms(char clock_hours, char clock_minutes, char clock_seconds, bool half_second) {
 	if (hold_clock_seconds > 0) {
+		if (half_second) {
+			half_second = false;
+			return;
+		}
+
 		display_update_segment(SEG_DP, true, hold_clock_seconds - 1);
 		hold_clock_seconds--;
 		return;
 	}
-	display_number_2_7_seg(clock_hours, 0, 2);
-	display_number_2_7_seg(clock_minutes, 2, 2);
+	if (half_second) {
+		half_second = false;
+		// Skip redraw on half second
+		display_update_segment(SEG_DP, true, 1);
+		display_update_segment(SEG_DP, true, 3);
+		return;
+	}
+	// Redraw only the overflows
 	display_number_2_7_seg(clock_seconds, 4, 2);
+	display_number_2_7_seg(clock_minutes, 2, 2);
+	display_number_2_7_seg(clock_hours, 0, 2);
 }
 
 void on_alarm_triggered(char alarm_index) {
