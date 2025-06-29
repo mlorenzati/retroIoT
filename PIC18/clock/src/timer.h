@@ -5,11 +5,15 @@
 // In Timer 0, Using a 256x prescaler we have 18000 ticks per second
 // For 500ms -> 65536 - 9000 = 56536  (0xDCD8)
 // with 9000 was 1/7200 fast so using (0xDCD7)
+// with 9001 was 1/36000 fast (27uS), which is in the range of xtal drift
+// with 9002 will be 1/36000 slow, which is in the range of xtal drift
+// The Strategy is to include a fine tune
 
 // Timer 0
-#define TMR0_PRESCALER 0b111  // 256X prescaler
-#define TMR0H_500MS    0xDC
-#define TMR0L_500MS    0xD7
+#define TMR0_PRESCALER      0b111  // 256X prescaler
+#define TMR0H_500MS         0xDC
+#define TMR0L_500MS_FAST    0xD7
+#define TMR0L_500MS_SLOW    0xD6
 
 // In Timer 1, Using a 8x prescaler we have 576000 ticks per second
 // For 5ms -> 65536 - 2880 =  (0xF4C0)
@@ -47,7 +51,8 @@
 
 typedef void(*timer_callback)(void);
 
-void timer0_init(void);
+void timer0_init(signed char fine_tune);
+void timer0_adjust(signed char fine_tune);
 void timer1_init(void);
 int  timer0_register_callback(timer_callback callback);
 int  timer1_register_callback(timer_callback callback);

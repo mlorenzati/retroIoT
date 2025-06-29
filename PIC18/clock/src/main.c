@@ -74,7 +74,7 @@ void peripheral_init(void) {
 	ADCON1 = 0x07;	
 
 	// Timer 0 & Timer 1 Init 
-	timer0_init();
+	timer0_init(0);
 	timer1_init();
 
 	// Display Init, shares display_key_index as multiplexor index

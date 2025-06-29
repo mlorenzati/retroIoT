@@ -2,13 +2,21 @@
 #include <stddef.h>
 #include <htc.h>
 
-void timer0_init(void) {
-	T0CON = TMR0_PRESCALER; // 16-bit mode, internal clock, prescaler 1:256
-    TMR0H = TMR0H_500MS;    // High byte preload
-    TMR0L = TMR0L_500MS;    // Low byte preload
-    TMR0IF = 0;             // Clear interrupt flag
-    TMR0ON = 1;             // Turn on Timer0
-	TMR0IE = 1;			    // Enable timer 0 interrupts
+static signed char timer0_tune;
+static signed char timer0_bias   = 0;
+static char timer0_active_callbacks = 0;
+static char timer1_active_callbacks = 0;
+static timer_callback timer0_callbacks[TIMER0_CALLBACK_MAX] = TIMER0_CALLBACK_INIT;
+static timer_callback timer1_callbacks[TIMER1_CALLBACK_MAX] = TIMER1_CALLBACK_INIT;
+
+void timer0_init(signed char fine_tune) {
+	timer0_tune = fine_tune;  // Minor timer drift tune
+	T0CON = TMR0_PRESCALER;   // 16-bit mode, internal clock, prescaler 1:256
+    TMR0H = TMR0H_500MS;      // High byte preload
+    TMR0L = TMR0L_500MS_FAST; // Low byte preload
+    TMR0IF = 0;               // Clear interrupt flag
+    TMR0ON = 1;               // Turn on Timer0
+	TMR0IE = 1;			      // Enable timer 0 interrupts
 }
 
 void timer1_init(void) {
@@ -20,11 +28,9 @@ void timer1_init(void) {
 	TMR1IE = 1;			    // Enable timer 1 interrupts
 }
 
-
-static char timer0_active_callbacks = 0;
-static char timer1_active_callbacks = 0;
-static timer_callback timer0_callbacks[TIMER0_CALLBACK_MAX] = TIMER0_CALLBACK_INIT;
-static timer_callback timer1_callbacks[TIMER1_CALLBACK_MAX] = TIMER1_CALLBACK_INIT;
+void timer0_adjust(signed char fine_tune) {
+	timer0_tune = fine_tune;
+}
 
 int  timer0_register_callback(timer_callback callback) {
 	if (timer0_active_callbacks >= TIMER0_CALLBACK_MAX) {
@@ -46,10 +52,19 @@ void timer0_handler(void) {
 	if (TMR0IF) {
 		TMR0IF = 0;
 
-		// Check if late
-        TMR0H = TMR0H_500MS;
-        TMR0L = TMR0L_500MS;
+		TMR0H = TMR0H_500MS;
 
+		if (timer0_bias < 0) {
+			TMR0L = TMR0L_500MS_SLOW;
+			timer0_bias++;
+		} else {
+			TMR0L = TMR0L_500MS_FAST;
+			timer0_bias--;
+		}
+		if (timer0_bias == 0) {
+			timer0_bias += timer0_tune;
+		}
+        
 		#if TIMER0_CALLBACK_MAX > 1
 		for (char i = 0; i < TIMER0_CALLBACK_MAX; i++) {
 			if (timer0_callbacks[i]) {
