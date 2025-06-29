@@ -8,9 +8,10 @@ bool clock_format_24_12_h    = true;
 bool clock_half_second_cnt   = false;
 bool clock_second_event      = false;
 bool clock_half_second_event = false;
-char clock_hours, clock_minutes, clock_seconds;
+char clock_hours, clock_minute, clock_seconds;
 clock_callback hms_callback = NULL;
 clock_alarm_callback alarm_callback = NULL;
+clock_alarm_data_t alarms[CLOCK_ALARM_MAX];
 
 void clock_handler(void) {
     clock_half_second_cnt = !clock_half_second_cnt;
@@ -27,7 +28,7 @@ void clock_init(bool _clock_format_24_12_h, clock_callback _hms_callback, clock_
 
     // Initialize clock registers
     clock_hours = 0;
-    clock_minutes = 0;
+    clock_minute = 0;
     clock_seconds = 0;
     clock_half_second_cnt = false;
 
@@ -39,9 +40,53 @@ void clock_init(bool _clock_format_24_12_h, clock_callback _hms_callback, clock_
     timer0_register_callback(clock_handler);
 }
 
+signed char clock_set_alarm(signed char id, char hour, char minute) {
+    if (id < 0) {
+        // Look for an available id
+        for (int i = 0; i < CLOCK_ALARM_MAX; i++) {
+            clock_alarm_data_t *alarm = alarms + i;
+            if (alarm->enabled) {
+                continue;
+            }
+            id = (signed char) i;
+            break;
+        }
+    }
+    if (id > -1 && id < CLOCK_ALARM_MAX) {
+        clock_alarm_data_t *alarm = alarms + id;
+        alarm->hour    = hour;
+        alarm->minute  = minute;
+        alarm->snooze  = 0;
+        alarm->enabled = true;
+        return id;
+    } 
+
+    return -1;
+}
+
+signed char clock_unset_alarm(signed char id) {
+    if (id < 0 || id >= CLOCK_ALARM_MAX) {
+        return -1;
+    }
+    clock_alarm_data_t *alarm = alarms + (char) id;
+    alarm->enabled = false;
+    return id;
+}
+
+signed char clock_get_alarm(signed char id, char *hour, char *minute, bool *enabled) {
+    if (id < 0 || id >= CLOCK_ALARM_MAX) {
+        return -1;
+    }
+    clock_alarm_data_t *alarm = alarms + (char) id;
+    *hour    = alarm->hour;
+    *minute  = alarm->minute;
+    *enabled = alarm->enabled;
+    return id;
+}
+
 void clock_event_loop(void) {
     if (clock_half_second_event) {
-        hms_callback(clock_hours, clock_minutes, clock_seconds, clock_half_second_event);
+        hms_callback(clock_hours, clock_minute, clock_seconds, clock_half_second_event);
         clock_half_second_event = false;
         return;
     } else if (!clock_second_event) {
@@ -51,15 +96,15 @@ void clock_event_loop(void) {
     // Once event is triggered ensure total propagation prior alarm validation
     clock_second_event = false;
     do {
-        if (++clock_seconds < CLOCK_SECOND_CNT) {
+        if (++clock_seconds < CLOCK_SECOND_MAX) {
             break;
         }
         clock_seconds = 0;
-        if (++clock_minutes < CLOCK_MINUTE_CNT) {
+        if (++clock_minute < CLOCK_MINUTE_MAX) {
             break;
         }
-        clock_minutes = 0;
-        if (++clock_hours < CLOCK_HOUR_CNT) {
+        clock_minute = 0;
+        if (++clock_hours < CLOCK_HOUR_MAX) {
             break;
         }
         clock_hours = 0;
@@ -67,15 +112,32 @@ void clock_event_loop(void) {
     
     // On updated h:m:s 
     if (hms_callback) {
-        hms_callback(clock_hours, clock_minutes, clock_seconds, clock_half_second_event);
+        hms_callback(clock_hours, clock_minute, clock_seconds, clock_half_second_event);
     }
 
-    //Check alarm logic (TBD)
+    //Check alarms only when seconds zeroed and alarm is connected
+    if (!alarm_callback || clock_seconds > 0) {
+        return;
+    }
+
+    for (int i = 0; i < CLOCK_ALARM_MAX; i++) {
+        clock_alarm_data_t *alarm = alarms + i;
+        if (!alarm->enabled) {
+            continue;
+        }
+        char minute = alarm->minute + alarm->snooze;
+        char hour = (alarm->hour + (minute / CLOCK_MINUTE_MAX)) % CLOCK_HOUR_MAX;
+        char minute = minute % CLOCK_MINUTE_MAX;
+        if (hour == clock_hours && minute == clock_minute) {
+            // Trigger alarm
+            alarm_callback(i);
+        }
+    }
 }
 
 void clock_get_hms(char *hour, char *minute, char *seconds) {
     *hour = clock_hours;
-    *minute = clock_minutes;
+    *minute = clock_minute;
     *seconds = clock_seconds;
 }
 
@@ -84,7 +146,7 @@ void clock_set_hms(char hour, char minute, char seconds) {
     clock_seconds = mod_seconds;
     minute += (seconds / 60);
     char mod_minute = minute % 60;
-    clock_minutes = mod_minute;
+    clock_minute = mod_minute;
     hour += (minute / 60);
     clock_hours = hour % 24;
 }
