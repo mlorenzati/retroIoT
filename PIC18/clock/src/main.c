@@ -47,11 +47,10 @@ void on_updated_hms(char clock_hours, char clock_minutes, char clock_seconds, bo
 			half_second = false;
 			return;
 		}
-
-		display_update_segment(SEG_DP, true, hold_clock_seconds - 1);
 		hold_clock_seconds--;
 		return;
 	}
+
 	if (half_second) {
 		half_second = false;
 		// Skip redraw on half second
@@ -59,7 +58,7 @@ void on_updated_hms(char clock_hours, char clock_minutes, char clock_seconds, bo
 		display_update_segment(SEG_DP, true, 3);
 		return;
 	}
-	// Redraw only the overflows
+	// Redraw
 	display_number_2_7_seg(clock_seconds, 4, 2);
 	display_number_2_7_seg(clock_minutes, 2, 2);
 	display_number_2_7_seg(clock_hours, 0, 2);
@@ -74,7 +73,7 @@ void peripheral_init(void) {
 	ADCON1 = 0x07;	
 
 	// Timer 0 & Timer 1 Init 
-	timer0_init(0);
+	timer0_init(1);
 	timer1_init();
 
 	// Display Init, shares display_key_index as multiplexor index
@@ -94,13 +93,11 @@ void peripheral_init(void) {
 
 void main(void) {
 	peripheral_init();
-	const unsigned char msg[DISPLAY_INDEX_MAX] = { 
-		DISPLAY_CHR_H, DISPLAY_CHR_E, DISPLAY_CHR_L, DISPLAY_CHR_L, DISPLAY_CHR_O, DISPLAY_CHR_EXCLAMATION
-	};
-	hold_clock_seconds = 6;
-	display_update_all(msg, false);
+	hold_clock_seconds = 10;
+	display_scrolling_text("Hello Almendra!", 6, 0, 8, false, false);
     while (1) {
         keyboard_event_loop();
 		clock_event_loop();
+		display_event_loop();
     }
 }

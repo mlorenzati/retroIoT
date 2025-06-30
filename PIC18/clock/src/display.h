@@ -19,6 +19,7 @@
 #define SEG_D   0b11011111 // 5
 #define SEG_C   0b10111111 // 6
 #define SEG_DP  0b01111111 // 7
+#define SEG_OFF 0b11111111 
 
 // Numbers
 #define DISPLAY_NUM_0 (SEG_F & SEG_A & SEG_B & SEG_E & SEG_D & SEG_C)
@@ -36,6 +37,7 @@
 #define DISPLAY_CHR_A (SEG_F & SEG_G & SEG_A & SEG_B & SEG_E & SEG_C)
 #define DISPLAY_CHR_B DISPLAY_NUM_8
 #define DISPLAY_CHR_C (SEG_F & SEG_A & SEG_E & SEG_D)
+#define DISPLAY_CHR_D (SEG_G & SEG_B & SEG_E & SEG_D & SEG_C)
 #define DISPLAY_CHR_E (SEG_F & SEG_G & SEG_A & SEG_E & SEG_D)
 #define DISPLAY_CHR_F (SEG_F & SEG_G & SEG_A & SEG_E)
 #define DISPLAY_CHR_G DISPLAY_NUM_6
@@ -50,7 +52,7 @@
 #define DISPLAY_CHR_O DISPLAY_NUM_0
 #define DISPLAY_CHR_P (SEG_F & SEG_G & SEG_A & SEG_B & SEG_E)
 #define DISPLAY_CHR_Q (DISPLAY_CHR_O & SEG_DP)
-#define DISPLAY_CHR_R (DISPLAY_CHR_H & SEG_DP)
+#define DISPLAY_CHR_R (SEG_G & SEG_E)
 #define DISPLAY_CHR_S DISPLAY_NUM_5
 #define DISPLAY_CHR_T DISPLAY_NUM_7
 #define DISPLAY_CHR_U (SEG_F & SEG_B & SEG_E & SEG_D & SEG_C)
@@ -63,6 +65,9 @@
 // Symbols
 #define DISPLAY_CHR_EXCLAMATION (SEG_B & SEG_DP)
 #define DISPLAY_CHR_QUESTION    (SEG_F & SEG_G & SEG_A & SEG_C & SEG_DP)
+#define DISPLAY_CHR_MINUS       (SEG_G)
+#define DISPLAY_CHR_DOT         (SEG_DP)
+#define DISPLAY_OFF             (SEG_OFF)
 
 // Display INDEX PINS, RB5..RB0 (RB7:RB6 are PGD/PGC for ICSP)
 #define DISPLAY_INDEX_PORT_DIRECTION  TRISB
@@ -74,12 +79,29 @@
 #define DISPLAY_SEGMENTS_LATCH        LATC   
 
 // Display Index management
-#define DISPLAY_INDEX_MAX 6
+#define DISPLAY_INDEX_MAX  6
+
+// Display event every 200ms on full scan
+#define DISPLAY_FRAMES_MAX 6
+
+// Display message max length
+#define DISPLAY_MSG_LENGTH 64
+
+// Display Animations
+#define DISPLAY_ANIMATE_NONE       0
+#define DISPLAY_ANIMATE_DONE       1
+#define DISPLAY_ANIMATE_TEXT_FWD   2
+#define DISPLAY_ANIMATE_TEXT_RWD   3
 
 void display_init(char *display_index);
+void display_event_loop(void);
+
 // Data should be larger or equal in size to DISPLAY_INDEX_MAX
 void display_update_segment(char segment_id, bool value, char index);
 void display_update_all(const unsigned char* data, bool reverse);
 void display_update_index(unsigned char data, char index);
 void display_number_2_7_seg(int number, char index, char size);
+char display_text(const char* data, char index, char size, bool off_left);
+char display_text_length(const char* data);
+bool display_scrolling_text(const char* data, char index_start, char index_end, char speed, bool reverse, bool check_busy);
 #endif
