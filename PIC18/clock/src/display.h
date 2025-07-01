@@ -93,6 +93,9 @@
 #define DISPLAY_ANIMATE_TEXT_FWD   2
 #define DISPLAY_ANIMATE_TEXT_RWD   3
 
+// Callbacks
+typedef void (*display_callback)(char);
+
 void display_init(char *display_index);
 void display_event_loop(void);
 
@@ -103,5 +106,5 @@ void display_update_index(unsigned char data, char index);
 void display_number_2_7_seg(int number, char index, char size);
 char display_text(const char* data, char index, char size, bool off_left);
 char display_text_length(const char* data);
-bool display_scrolling_text(const char* data, char index_start, char index_end, char speed, bool reverse, bool check_busy);
+bool display_scrolling_text(const char* data, char index_start, char index_end, char speed, bool reverse, bool check_busy, display_callback animation_completed);
 #endif

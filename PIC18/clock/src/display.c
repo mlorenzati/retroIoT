@@ -7,6 +7,7 @@ static char *display_index = NULL;
 static char display_frames_cnt = 0;
 static bool display_tick_event = false;
 static unsigned char display_buffer[DISPLAY_INDEX_MAX];
+static display_callback display_animation_completed = NULL;
 
 // Mappings: Numbers 
 const unsigned char numbers_7_seg[10] = {
@@ -20,7 +21,8 @@ const unsigned char char_7_seg[26] = { DISPLAY_CHR_A, DISPLAY_CHR_B, DISPLAY_CHR
 };
 
 // Animations
-unsigned char display_animate_action = DISPLAY_ANIMATE_NONE;
+char display_animate_action      = DISPLAY_ANIMATE_NONE;
+char display_animate_prev_action = DISPLAY_ANIMATE_NONE;
 unsigned char display_animate_speed  = 0;
 unsigned char display_animate_count  = 0;
 unsigned char display_animate_index_start = 0;
@@ -109,6 +111,12 @@ void display_update_segment(char segment_id, bool value, char index) {
     }
 }
 
+void display_update_action(char new) {
+    display_animate_prev_action = display_animate_action;
+    display_animate_action = new;
+}
+
+
 void display_event_loop(void) {
     if (!display_tick_event) {
         return;
@@ -131,21 +139,28 @@ void display_event_loop(void) {
                 }
             }
             if (empty_chars >= display_animate_index_end) {
-                display_animate_action = DISPLAY_ANIMATE_NONE;
+                display_update_action(DISPLAY_ANIMATE_DONE);
             }
             break;
         case DISPLAY_ANIMATE_TEXT_RWD:
             empty_chars = display_text(display_animate_data_end, display_animate_index_start, DISPLAY_FRAMES_MAX, true);
-            if (display_animate_index_start > 0) {
-                display_animate_index_start--;
-            } else {
-                if (display_animate_data_end > display_animate_data) {
-                    display_animate_data_end--;
+            if (display_animate_data_end > display_animate_data) {
+                display_animate_data_end--;
+            } else if (display_animate_index_start <= DISPLAY_INDEX_MAX) {
+                display_animate_index_start++;
+                if (display_animate_index_start > DISPLAY_INDEX_MAX) {
+                    display_update_action(DISPLAY_ANIMATE_DONE);
                 }
             }
             break;
-        default:
+        case DISPLAY_ANIMATE_DONE:
             display_animate_action = DISPLAY_ANIMATE_NONE;
+            if (display_animation_completed) {
+                display_animation_completed(display_animate_prev_action);
+            }
+            break;
+        default:
+            display_update_action(DISPLAY_ANIMATE_NONE);
             break;
     }
 }
@@ -206,7 +221,8 @@ char display_text(const char* data, char index, char size, bool off_left) {
     return size;
 }
 
-bool display_scrolling_text(const char* data, char index_start, char index_end, char speed, bool reverse, bool check_busy) {
+bool display_scrolling_text(const char* data, char index_start, char index_end, 
+    char speed, bool reverse, bool check_busy, display_callback animation_completed) {
     if (check_busy && display_animate_action != DISPLAY_ANIMATE_NONE) {
         return false;
     }
@@ -219,9 +235,14 @@ bool display_scrolling_text(const char* data, char index_start, char index_end, 
     display_animate_speed       = speed;
     display_animate_count       = speed;
     display_animate_index_start = index_start;
-    display_animate_index_end   = index_end > DISPLAY_INDEX_MAX ? 0 : DISPLAY_INDEX_MAX - index_end;
+    display_animate_index_end   = index_end > DISPLAY_INDEX_MAX ? DISPLAY_INDEX_MAX : index_end;
+    if (!reverse) {
+        display_animate_index_end = DISPLAY_INDEX_MAX - display_animate_index_end;
+    }
     display_animate_data        = data;
     display_animate_data_end    = data + text_length;
-    
+
+    display_animation_completed = animation_completed;
+
     return true;
 }

@@ -71,3 +71,5 @@ PIC18/watch/watch.lst
 *.rlf
 *.sdb
 *.sym
+PIC18/clock/htplug-out111.tmp
+PIC18/clock/.vscode/settings.json

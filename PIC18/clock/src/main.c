@@ -40,14 +40,9 @@ void on_keyboard_pressed(keyboard_status_t keys) {
 	clock_set_hms(hour, minute, seconds);
 }
 
-unsigned char hold_clock_seconds;
+bool hold_hms_clock = true;
 void on_updated_hms(char clock_hours, char clock_minutes, char clock_seconds, bool half_second) {
-	if (hold_clock_seconds > 0) {
-		if (half_second) {
-			half_second = false;
-			return;
-		}
-		hold_clock_seconds--;
+	if (hold_hms_clock) {
 		return;
 	}
 
@@ -91,10 +86,19 @@ void peripheral_init(void) {
 	GIE = 1;
 }
 
+void on_last_animation_completed(char animation_action) {
+	hold_hms_clock = false;
+}
+
+void on_first_animation_completed(char animation_action) {
+	if (animation_action == DISPLAY_ANIMATE_TEXT_FWD) {
+		display_scrolling_text("...you rock!...you know...", 0, 6, 8, true, false, on_last_animation_completed);	
+	}
+}
+
 void main(void) {
 	peripheral_init();
-	hold_clock_seconds = 10;
-	display_scrolling_text("Hello Almendra!", 6, 0, 8, false, false);
+	display_scrolling_text("Hello Almendra!", 6, 0, 8, false, false, on_first_animation_completed);
     while (1) {
         keyboard_event_loop();
 		clock_event_loop();
