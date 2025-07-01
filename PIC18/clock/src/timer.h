@@ -23,7 +23,7 @@
 
 // Maximum number of callbacks
 #define TIMER0_CALLBACK_MAX 1
-#define TIMER1_CALLBACK_MAX 2
+#define TIMER1_CALLBACK_MAX 3
 
 #if TIMER0_CALLBACK_MAX == 1
   #define TIMER0_CALLBACK_INIT { NULL }

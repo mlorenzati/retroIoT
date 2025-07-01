@@ -1,6 +1,8 @@
+#include <stddef.h>
+#include <stdbool.h>
 #include "keyboard.h"
 #include "timer.h"
-#include <stdbool.h>
+
 
 const char *key_index = NULL;
 key_status_t keys_stats[KEY_INDEX_MAX];

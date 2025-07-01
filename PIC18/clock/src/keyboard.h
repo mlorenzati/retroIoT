@@ -2,7 +2,6 @@
 #define KEYBOARD_H
 
 #include <htc.h>
-#include <stddef.h>
 
 typedef enum {
     key_inactive = 0,
