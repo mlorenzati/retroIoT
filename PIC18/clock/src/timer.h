@@ -26,25 +26,25 @@
 #define TIMER1_CALLBACK_MAX 3
 
 #if TIMER0_CALLBACK_MAX == 1
-  #define TIMER0_CALLBACK_INIT { NULL }
+  #define TIMER0_CALLBACK_INIT { timer_dummy_callback }
 #elif TIMER0_CALLBACK_MAX == 2
-  #define TIMER0_CALLBACK_INIT { NULL, NULL }
+  #define TIMER0_CALLBACK_INIT { timer_dummy_callback, timer_dummy_callback }
 #elif TIMER0_CALLBACK_MAX == 3
-  #define TIMER0_CALLBACK_INIT { NULL, NULL, NULL }
+  #define TIMER0_CALLBACK_INIT { timer_dummy_callback, timer_dummy_callback, timer_dummy_callback }
 #elif TIMER0_CALLBACK_MAX == 4
-  #define TIMER0_CALLBACK_INIT { NULL, NULL, NULL, NULL }
+  #define TIMER0_CALLBACK_INIT { timer_dummy_callback, timer_dummy_callback, timer_dummy_callback, timer_dummy_callback }
 #else
   #error "TIMER0_CALLBACK_MAX not supported yet for that size"
 #endif
 
 #if TIMER1_CALLBACK_MAX == 1
-  #define TIMER1_CALLBACK_INIT { NULL }
+  #define TIMER1_CALLBACK_INIT { timer_dummy_callback }
 #elif TIMER1_CALLBACK_MAX == 2
-  #define TIMER1_CALLBACK_INIT { NULL, NULL }
+  #define TIMER1_CALLBACK_INIT { timer_dummy_callback, timer_dummy_callback }
 #elif TIMER1_CALLBACK_MAX == 3
-  #define TIMER1_CALLBACK_INIT { NULL, NULL, NULL }
+  #define TIMER1_CALLBACK_INIT { timer_dummy_callback, timer_dummy_callback, timer_dummy_callback }
 #elif TIMER1_CALLBACK_MAX == 4
-  #define TIMER1_CALLBACK_INIT { NULL, NULL, NULL, NULL }
+  #define TIMER1_CALLBACK_INIT { timer_dummy_callback, timer_dummy_callback, timer_dummy_callback, timer_dummy_callback }
 #else
   #error "TIMER1_CALLBACK_MAX not supported yet for that size"
 #endif
@@ -52,6 +52,7 @@
 typedef void(*timer_callback)(void);
 
 void timer0_init(signed char fine_tune);
+void timer_dummy_callback(void);
 void timer0_adjust(signed char fine_tune);
 void timer1_init(void);
 char timer0_register_callback(timer_callback callback);

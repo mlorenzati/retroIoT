@@ -28,6 +28,8 @@ void timer1_init(void) {
 	TMR1IE = 1;			    // Enable timer 1 interrupts
 }
 
+void timer_dummy_callback(void) {}
+
 void timer0_adjust(signed char fine_tune) {
 	timer0_tune = fine_tune;
 }
@@ -49,48 +51,49 @@ char timer1_register_callback(timer_callback callback) {
 }
 
 void timer0_handler(void) {
-	if (TMR0IF) {
-		TMR0IF = 0;
-
-		TMR0H = TMR0H_500MS;
-
-		if (timer0_bias < 0) {
-			TMR0L = TMR0L_500MS_SLOW;
-			timer0_bias++;
-		} else {
-			TMR0L = TMR0L_500MS_FAST;
-			timer0_bias--;
-		}
-		if (timer0_bias == 0) {
-			timer0_bias += timer0_tune;
-		}
-        
-		#if TIMER0_CALLBACK_MAX > 1
-		for (char i = 0; i < TIMER0_CALLBACK_MAX; i++) {
-			if (timer0_callbacks[i]) {
-				timer0_callbacks[i]();
-			}
-		}
-		#else
-		if (timer0_callbacks[0]) {
-			timer0_callbacks[0]();
-		}
-		#endif	
+	if (!TMR0IF) {
+		return;
 	}
+
+	TMR0IF = 0;
+	TMR0H = TMR0H_500MS;
+
+	// Adjustment
+	if (timer0_bias < 0) {
+		TMR0L = TMR0L_500MS_SLOW;
+		timer0_bias++;
+	} else {
+		TMR0L = TMR0L_500MS_FAST;
+		timer0_bias--;
+	}
+	if (timer0_bias == 0) {
+		timer0_bias += timer0_tune;
+	}
+	
+	#if TIMER0_CALLBACK_MAX > 1
+	for (char i = 0; i < TIMER0_CALLBACK_MAX; i++) {
+		timer0_callbacks[i]();
+	}
+	#else
+	timer0_callbacks[0]();
+	#endif	
 }
 
+
 void timer1_handler(void) {
-	if (TMR1IF) {
-		TMR1IF = 0;
-
-		// Check if late
-        TMR1H = TMR1H_5MS;
-        TMR1L = TMR1L_5MS;
-
-		for (char i = 0; i < TIMER1_CALLBACK_MAX; i++) {
-			if (timer1_callbacks[i]) {
-				timer1_callbacks[i]();
-			}
-		}
+	if (!TMR1IF) {
+		return;
 	}
+	TMR1IF = 0;
+
+	TMR1H = TMR1H_5MS;
+	TMR1L = TMR1L_5MS;
+
+	#if TIMER1_CALLBACK_MAX > 1
+	for (char i = 0; i < TIMER1_CALLBACK_MAX; i++) {
+		timer1_callbacks[i]();
+	}
+	#else
+	timer1_callbacks[i]();
+	#endif
 }
