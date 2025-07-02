@@ -18,8 +18,13 @@ typedef enum {
     MENU_EVENT_COUNT
 } menu_event;
 
+typedef void(*menu_ev_loop_callback)(void);
+
+#define MENU_CALLBACK_MAX (sizeof(menu_event_loop_tasks) / sizeof(menu_event_loop_tasks[0]))
+
 void menu_init(menu_state mode);
 void menu_state_set(menu_state state);
 void menu_event_trigger(menu_event event);
 void menu_event_loop(void);
+void menu_runner(void);
 #endif

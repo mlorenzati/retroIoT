@@ -11,6 +11,15 @@ char menu_display_key_index   = 0;
 menu_state menu_prev_state   = MENU_STATE_NONE;
 menu_state menu_current_state = MENU_STATE_NONE;
 menu_event menu_current_event = MENU_EVENT_NONE;
+menu_ev_loop_callback menu_event_loop_tasks[] = {
+    clock_event_loop,       /* Maximum priority to check, low presence in a second */
+    keyboard_event_loop,    /* Medium priority to respond to a keyboard action */
+    menu_event_loop,        /* Medium to low priority */
+    beep_event_loop,        /* Low priority */
+    display_event_loop      /* Most intensive app, reduced priority */
+};
+
+const char menu_freq_mask[] = { (0), (0x4 - 1), (0x4 - 1), (0x8 - 1), (0x10 - 1) };
 
 // Clock value update handler
 void menu_on_updated_hms(char clock_hours, char clock_minutes, char clock_seconds, bool half_second) {
@@ -96,7 +105,7 @@ void menu_on_startup_completed(char animation_action) {
     menu_event_trigger(MENU_EVENT_GENERIC);
 }
 
-void _menu_event_loop(void) {
+void menu_event_loop(void) {
     if (menu_current_event == MENU_EVENT_NONE) {
         return;
     }
@@ -133,12 +142,14 @@ void _menu_event_loop(void) {
 }
 
 // Main event loop
-void menu_event_loop(void) {
+void menu_runner(void) {
+    char cnt = 0;
     while (true) {
-        _menu_event_loop();
-        keyboard_event_loop();
-        display_event_loop();
-        clock_event_loop();
-        beep_event_loop();
+        cnt++;
+        for (char i = 0; i < MENU_CALLBACK_MAX; i++) {
+            if (cnt & menu_freq_mask[i] == 0) {
+                menu_event_loop_tasks[i]();
+            }
+        }
     }
 }

@@ -27,5 +27,5 @@ void bootstrap_init(void) {
 void main(void) {
 	bootstrap_init();
 	menu_event_trigger(MENU_EVENT_GENERIC);
-	menu_event_loop();
+	menu_runner();
 }
