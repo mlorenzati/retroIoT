@@ -15,10 +15,6 @@ char repeat_rate_30ms_fast;
 
 void keyboard_handler(void) {
     // Called periodically by a fast IRQ timer
-    if (key_index == NULL) {
-        return;
-    }
-
     // Read input pin, aligned to the scan index
     bool value = !KEYBOARD_PIN_VALUE; // Pressed is LOW
     key_status_t *stat = &keys_stats[*key_index];
@@ -82,9 +78,6 @@ void keyboard_init(const char *key_idx, char _repeat_rate_30ms, char _repeat_rat
     // Configure I/O Ports
     KEYBOARD_PIN_DIRECTION = 1;
 
-    // Define shared display index
-    key_index = key_idx;
-
     // Register on key event callback
     keys_callback = callback;
 
@@ -99,8 +92,13 @@ void keyboard_init(const char *key_idx, char _repeat_rate_30ms, char _repeat_rat
     repeat_rate_30ms = _repeat_rate_30ms;
     repeat_rate_30ms_fast = _repeat_rate_30ms_fast;
 
-    // Register interrupt handler
-    timer1_register_callback(keyboard_handler);
+    // Register interrupt handler only on valid shared key_index
+    if (key_index) {
+        // Define shared display index
+        key_index = key_idx;
+        
+        timer1_register_callback(keyboard_handler);
+    }
 }
 
 void keyboard_event_loop(void) {

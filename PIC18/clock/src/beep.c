@@ -13,15 +13,15 @@ bool beep_event_completed = false;
 beep_callback beep_playback_completed = NULL;
 
 void beep_handler(void) {
-    if (++beep_counter < beep_divider) {
-       return;
-    }
-    beep_counter = 0;
-
     // Play sequence if active
     if (beep_play_count == 0) {
         return;
     }
+
+    if (++beep_counter < beep_divider) {
+       return;
+    }
+    beep_counter = 0;
 
     // If a sequence completed, restart
     if (beep_play_index >= beep_play_size) {

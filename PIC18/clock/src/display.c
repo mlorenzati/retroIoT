@@ -42,10 +42,6 @@ const unsigned char *display_animate_data_end = NULL;
 
 void display_handler(void) {
     // Caller by the IRQ timer periodically, fast
-    if (display_index == NULL) {
-        return;
-    }
-
     if (++(*display_index) >= DISPLAY_INDEX_MAX) {
         *display_index = 0;
         if (++display_frames_cnt >= DISPLAY_ANIMATE_MAX) {
@@ -73,11 +69,13 @@ void display_init(char *idx) {
         display_buffer[i]= SEG_DP;
     }
 
-    // Define shared display index
-    display_index = idx;
+    // Register interrupt handler only on valid display index
+    if (idx) {
+        // Define shared display index
+        display_index = idx;
 
-    // Register interrupt handler
-    timer1_register_callback(display_handler);
+        timer1_register_callback(display_handler);
+    }  
 }
 
 void display_update_index(unsigned char data, char index) {
