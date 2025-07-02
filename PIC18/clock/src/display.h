@@ -79,10 +79,13 @@
 #define DISPLAY_SEGMENTS_LATCH        LATC   
 
 // Display Index management
-#define DISPLAY_INDEX_MAX  6
+#define DISPLAY_INDEX_MAX   6
 
 // Display event every 200ms on full scan
-#define DISPLAY_FRAMES_MAX 6
+#define DISPLAY_FRAMES_MAX  6
+
+// Display aniamte every 400ms on full scan
+#define DISPLAY_ANIMATE_MAX 6
 
 // Display message max length
 #define DISPLAY_MSG_LENGTH 64
@@ -103,7 +106,7 @@ void display_event_loop(void);
 void display_update_segment(char segment_id, bool value, char index);
 void display_update_all(const unsigned char* data, bool reverse);
 void display_update_index(unsigned char data, char index);
-void display_number_2_7_seg(int number, char index, char size);
+void display_number_2_7_seg(char number, char index, char size);
 char display_text(const char* data, char index, char size, bool off_left);
 char display_text_length(const char* data);
 bool display_scrolling_text(const char* data, char index_start, char index_end, char speed, bool reverse, bool check_busy, display_callback animation_completed);

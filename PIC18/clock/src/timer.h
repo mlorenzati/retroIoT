@@ -54,8 +54,8 @@ typedef void(*timer_callback)(void);
 void timer0_init(signed char fine_tune);
 void timer0_adjust(signed char fine_tune);
 void timer1_init(void);
-int  timer0_register_callback(timer_callback callback);
-int  timer1_register_callback(timer_callback callback);
+char timer0_register_callback(timer_callback callback);
+char timer1_register_callback(timer_callback callback);
 void timer0_handler(void);
 void timer1_handler(void);
 

@@ -125,9 +125,15 @@ void clock_event_loop(void) {
         if (!alarm->enabled) {
             continue;
         }
+        char hour = alarm->hour;
         char minute = alarm->minute + alarm->snooze;
-        char hour = (alarm->hour + (minute / CLOCK_MINUTE_MAX)) % CLOCK_HOUR_MAX;
-        char minute = minute % CLOCK_MINUTE_MAX;
+        if (minute >= CLOCK_MINUTE_MAX) {
+            minute -= CLOCK_MINUTE_MAX;
+            hour += 1;
+        }
+        if (hour >= CLOCK_HOUR_MAX) {
+            hour -= CLOCK_HOUR_MAX;
+        }
         if (hour == clock_hours && minute == clock_minute) {
             // Trigger alarm
             alarm_callback(i);
@@ -141,12 +147,11 @@ void clock_get_hms(char *hour, char *minute, char *seconds) {
     *seconds = clock_seconds;
 }
 
-void clock_set_hms(char hour, char minute, char seconds) {
-    char mod_seconds = seconds % 60;
-    clock_seconds = mod_seconds;
-    minute += (seconds / 60);
-    char mod_minute = minute % 60;
-    clock_minute = mod_minute;
-    hour += (minute / 60);
-    clock_hours = hour % 24;
+bool clock_set_hms(char hour, char minute, char seconds) {
+    if (hour >= CLOCK_HOUR_MAX || minute >= CLOCK_MINUTE_MAX || seconds >= CLOCK_SECOND_MAX) {
+        return false;
+    }
+    clock_seconds = seconds;
+    clock_minute = minute;
+    clock_hours = hour;
 }

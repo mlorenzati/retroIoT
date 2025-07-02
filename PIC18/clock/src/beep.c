@@ -28,6 +28,7 @@ void beep_handler(void) {
         beep_play_index = 0;
         if (--beep_play_count == 0) {
             BEEP_PIN_LATCH = 0;
+            beep_event_completed = true;
             return;
         }
     }
@@ -65,6 +66,7 @@ void beep_play(const char *data, char size, char play_count, beep_callback on_pl
 
 void beep_event_loop(void) {
     if (beep_event_completed && beep_playback_completed) {
+        beep_event_completed = false;
         beep_playback_completed();
     }
 }

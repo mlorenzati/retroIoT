@@ -24,6 +24,6 @@ signed char clock_get_alarm(signed char id, char *hour, char *minute, bool *enab
 
 void clock_event_loop(void);
 void clock_get_hms(char *hour, char *minute, char *seconds);
-void clock_set_hms(char hour, char minute, char seconds);
+bool clock_set_hms(char hour, char minute, char seconds);
 
 #endif

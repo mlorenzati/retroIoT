@@ -17,7 +17,7 @@ void bootstrap_init(void) {
 	timer1_init();
 
 	// Menu system init (internally deals with display, keyboard, beeper and seconds clock)
-	menu_init(MENU_MODE_STARTUP);
+	menu_init(MENU_STATE_STARTUP);
 
 	// Enable peripheral and global interrupts
 	PEIE = 1;
@@ -26,7 +26,6 @@ void bootstrap_init(void) {
 
 void main(void) {
 	bootstrap_init();
-    while (1) {
-		menu_event_loop();
-    }
+	menu_event_trigger(MENU_EVENT_GENERIC);
+	menu_event_loop();
 }

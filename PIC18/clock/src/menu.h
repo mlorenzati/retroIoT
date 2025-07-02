@@ -1,12 +1,25 @@
 #ifndef MENU_H
 #define MENU_H
 
-#define MENU_MODE_STARTUP        0
-#define MENU_MODE_CLOCK          1
-#define MENU_MODE_ALARM_SET      2
-#define MENU_MODE_ALARM_TRIGERED 3
-#define MENU_MODE_ALARM_SNOOZE   4
+typedef enum {
+    MENU_STATE_NONE = 0,
+    MENU_STATE_STARTUP,
+    MENU_STATE_CLOCK,
+    MENU_STATE_ALARM_CONFIG,
+    MENU_STATE_ALARM,
+    MENU_STATE_COUNT
+} menu_state;
 
-void menu_init(char mode);
+typedef enum {
+    MENU_EVENT_NONE = 0,
+    MENU_EVENT_GENERIC,
+    MENU_EVENT_ALARM_TRIGGERED,
+    MENU_EVENT_KEY_PRESSED,
+    MENU_EVENT_COUNT
+} menu_event;
+
+void menu_init(menu_state mode);
+void menu_state_set(menu_state state);
+void menu_event_trigger(menu_event event);
 void menu_event_loop(void);
 #endif

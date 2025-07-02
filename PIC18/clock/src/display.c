@@ -9,6 +9,16 @@ static bool display_tick_event = false;
 static unsigned char display_buffer[DISPLAY_INDEX_MAX];
 static display_callback display_animation_completed = NULL;
 
+const char div10_table[100] = {
+    0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,
+    5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9 
+};
+
+const char mod10_table[100] = {
+    0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,
+    0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9
+};
+
 // Mappings: Numbers 
 const unsigned char numbers_7_seg[10] = {
     DISPLAY_NUM_0, DISPLAY_NUM_1, DISPLAY_NUM_2, DISPLAY_NUM_3, DISPLAY_NUM_4, DISPLAY_NUM_5, DISPLAY_NUM_6, DISPLAY_NUM_7, DISPLAY_NUM_8, DISPLAY_NUM_9
@@ -38,7 +48,8 @@ void display_handler(void) {
 
     if (++(*display_index) >= DISPLAY_INDEX_MAX) {
         *display_index = 0;
-        if (++display_frames_cnt >= DISPLAY_FRAMES_MAX) {
+        if (++display_frames_cnt >= DISPLAY_ANIMATE_MAX) {
+            display_frames_cnt = 0;
             display_tick_event = true;
         }
     }
@@ -47,7 +58,6 @@ void display_handler(void) {
     DISPLAY_INDEX_PORT_LATCH = display_activation;
     DISPLAY_INDEX_PORT_DIRECTION = display_activation | DISPLAY_INDEX_PORT_MASK;
     DISPLAY_SEGMENTS_LATCH = display_buffer[*display_index];
-
 }
 
 void display_init(char *idx) {
@@ -84,18 +94,23 @@ void display_update_all(const unsigned char* data, bool reverse) {
     }
 }
 
-void display_number_2_7_seg(int number, char index, char size) {
-    if (index >= DISPLAY_INDEX_MAX) {
-        // Index is above the max size
+void display_number_2_7_seg(char number, char index, char size) {
+    if (index >= DISPLAY_INDEX_MAX || size > 2 || number > 99) {
+        // Index is above the max size, number size is larger tan 2 segments or number is larger than 99
         return;
     }
-    int max_size = DISPLAY_INDEX_MAX - index;
-    size = size > max_size ? max_size : size;
-    for (signed char idx = index + size - 1; idx >= index; idx--) {
-        int mod = number % 10;
-        number -= mod;
-		number /= 10;
-        display_update_index(numbers_7_seg[mod], idx);
+    
+    if ((index + size) > DISPLAY_INDEX_MAX)
+        size = DISPLAY_INDEX_MAX - index;
+
+    char ones = mod10_table[number];
+    char tens = div10_table[number];
+
+    if (size == 2) {
+        display_update_index(numbers_7_seg[tens], index);
+        display_update_index(numbers_7_seg[ones], index + 1);
+    } else if (size == 1) {
+        display_update_index(numbers_7_seg[ones], index);
     }
 }
 
@@ -195,27 +210,25 @@ char display_text(const char* data, char index, char size, bool off_left) {
     } 
     for (char i = index; i < index_max; i++) {
         char value = *data;
-        if (value >= 'a' && value <= 'z') {
-            display_buffer[i] = char_7_seg[value - 'a'];
-        } else if (value >= 'A' && value <= 'Z') {
-            display_buffer[i] = char_7_seg[value - 'A'];
-        } else if (value >= '0' && value <= '9') {
-            display_buffer[i] = char_7_seg[value - '0'];
-        } else if (value == '-') {
-            display_buffer[i] = DISPLAY_CHR_MINUS;
-        } else if (value == '!') {
-            display_buffer[i] = DISPLAY_CHR_EXCLAMATION;
-        } else if (value == '?') {
-            display_buffer[i] = DISPLAY_CHR_QUESTION;
-        } else if (value == '.' || value == ',') {
-            display_buffer[i] = DISPLAY_CHR_DOT;
-        } else {
-            display_buffer[i] = DISPLAY_OFF;
-        }
-        if (value != 0) {
-            data++;
-        } else {
+        unsigned char *buffer = display_buffer + i;
+        if (value == 0) {
+            *buffer = DISPLAY_OFF;
             size++;
+        } else {
+            if (value >= 'a' && value <= 'z') {
+                *buffer = char_7_seg[value - 'a'];
+            } else if (value >= 'A' && value <= 'Z') {
+                *buffer = char_7_seg[value - 'A'];
+            } else if (value >= '0' && value <= '9') {
+                *buffer = numbers_7_seg[value - '0'];
+            } else switch (value) {
+                case '-': *buffer = DISPLAY_CHR_MINUS; break;
+                case '!': *buffer = DISPLAY_CHR_EXCLAMATION; break;
+                case '?': *buffer = DISPLAY_CHR_QUESTION; break;
+                case '.': case ',': *buffer = DISPLAY_CHR_DOT; break;
+                default: *buffer = DISPLAY_OFF; break;
+            }
+            data++;
         }
     }
     return size;

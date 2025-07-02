@@ -32,7 +32,7 @@ void timer0_adjust(signed char fine_tune) {
 	timer0_tune = fine_tune;
 }
 
-int  timer0_register_callback(timer_callback callback) {
+char timer0_register_callback(timer_callback callback) {
 	if (timer0_active_callbacks >= TIMER0_CALLBACK_MAX) {
 		return 0;
 	}
@@ -40,7 +40,7 @@ int  timer0_register_callback(timer_callback callback) {
 	return timer0_active_callbacks;
 }
 
-int  timer1_register_callback(timer_callback callback) {
+char timer1_register_callback(timer_callback callback) {
 	if (timer1_active_callbacks >= TIMER1_CALLBACK_MAX) {
 		return 0;
 	}
