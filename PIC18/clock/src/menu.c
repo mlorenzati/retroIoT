@@ -19,7 +19,8 @@ menu_ev_loop_callback menu_event_loop_tasks[] = {
     display_event_loop      /* Most intensive app, reduced priority */
 };
 
-const char menu_freq_mask[] = { (0), (0x4 - 1), (0x4 - 1), (0x8 - 1), (0x10 - 1) };
+const char menu_freq_mask[] = { (0), (0x2 - 1), (0x2 - 1), (0x4 - 1), (0x8 - 1) };
+char menu_alarm_config_n = 0;
 
 // Clock value update handler
 void menu_on_updated_hms(char clock_hours, char clock_minutes, char clock_seconds, bool half_second) {
@@ -57,8 +58,10 @@ void menu_on_alarm_triggered(char alarm_index) {
 // Keyboard pressed handler
 void menu_on_keyboard_pressed(keyboard_status_t keys) {
     if (keys.key1 == key_released) {
+        menu_event_trigger(MENU_EVENT_NEXT_MENU);
 	}
     if (keys.key2 == key_released) {
+        clock_set_hms(12 ,30, 30);
 	}
 	if (keys.key3 == key_released) {
 	}
@@ -79,7 +82,7 @@ void menu_init(menu_state mode) {
 	display_init(&menu_display_key_index);
 
     // Keyboard Init
-	keyboard_init(&menu_display_key_index, 28 /* 28 * 30ms = 840ms for repeat*/, 14 /* 13 * 30ms for repeat fast*/ , menu_on_keyboard_pressed);
+	keyboard_init(&menu_display_key_index, 28 /* 28 * 30ms = 840ms for repeat*/, 14 /* 13 * 30ms for repeat fast*/, menu_on_keyboard_pressed);
 
     // Beeper Init
     beep_init(15);
@@ -100,9 +103,15 @@ void menu_event_trigger(menu_event event) {
     menu_current_event = event;
 }
 
-void menu_on_startup_completed(char animation_action) {
+void menu_on_clock_show(char animation_action) {
     menu_state_set(MENU_STATE_CLOCK);
     menu_event_trigger(MENU_EVENT_GENERIC);
+}
+
+void menu_on_alarm_cfg_message_completed(char animation_action) {
+}
+
+void menu_on_clock_cfg_message_completed(char animation_action) {
 }
 
 void menu_event_loop(void) {
@@ -116,7 +125,7 @@ void menu_event_loop(void) {
     switch (menu_current_state) {
         case MENU_STATE_STARTUP:
             if (current_event == MENU_EVENT_GENERIC) {
-                display_scrolling_text("Welcome Home!... ho.. ho.. hoo...", 6, 0, 2, false, false, menu_on_startup_completed);
+                display_scrolling_text("What happened?", 6, 0, 2, false, false, menu_on_clock_show);
             }
             break;
         case MENU_STATE_CLOCK:
@@ -124,15 +133,35 @@ void menu_event_loop(void) {
                 char hour, minute, seconds;
                 clock_get_hms(&hour, &minute, &seconds);
                 menu_on_updated_hms(hour, minute, seconds, false);
+            } else if (current_event == MENU_EVENT_NEXT_MENU) {
+                menu_state_set(MENU_STATE_ALARM_CONFIG);
+                menu_event_trigger(MENU_EVENT_GENERIC);
             }
             break;
         case MENU_STATE_ALARM_CONFIG:
+            if (current_event == MENU_EVENT_GENERIC) {
+                const char *configs[4] = {"Alarm 1", "Alarm 2", "Alarm 3", "Alarm 4"};
+                display_scrolling_text(configs[menu_alarm_config_n], 6, 0, 2, false, false, menu_on_alarm_cfg_message_completed);
+            } else if (current_event == MENU_EVENT_NEXT_MENU) {
+                menu_event_trigger(MENU_EVENT_GENERIC);
+                if (++menu_alarm_config_n >= 4) {
+                    menu_alarm_config_n = 0;
+                    menu_state_set(MENU_STATE_CLOCK_CONFIG);
+                }
+            }
             break;
         case MENU_STATE_ALARM:
             if (current_event == MENU_EVENT_ALARM_TRIGGERED) {
                 const char play[2] = {0b10101010, 0b10101010};
                 beep_play(play, 16, 10, menu_on_alarm_playblack_completed);
                 display_text("WakeUp", 0, 6, false);
+            }
+            break;
+        case MENU_STATE_CLOCK_CONFIG:
+            if (current_event == MENU_EVENT_GENERIC) {
+                display_scrolling_text("Clock config", 6, 0, 2, false, false, menu_on_clock_cfg_message_completed);
+            } else if (current_event == MENU_EVENT_NEXT_MENU) {
+                display_scrolling_text("Clock Time", 6, 0, 2, false, false, menu_on_clock_show);
             }
             break;
         case MENU_STATE_NONE:
@@ -147,7 +176,7 @@ void menu_runner(void) {
     while (true) {
         cnt++;
         for (char i = 0; i < MENU_CALLBACK_MAX; i++) {
-            if (cnt & menu_freq_mask[i] == 0) {
+            if ((cnt & menu_freq_mask[i]) == 0) {
                 menu_event_loop_tasks[i]();
             }
         }
