@@ -11,7 +11,7 @@ bool clock_half_second_event = false;
 char clock_hours, clock_minute, clock_seconds;
 clock_callback hms_callback = NULL;
 clock_alarm_callback alarm_callback = NULL;
-clock_alarm_data_t alarms[CLOCK_ALARM_MAX];
+clock_alarm_data_t alarms[CLOCK_ALARM_MAX] = CLOCK_ALARM_INIT;
 
 void clock_handler(void) {
     clock_half_second_cnt = !clock_half_second_cnt;
@@ -40,6 +40,14 @@ void clock_init(bool _clock_format_24_12_h, clock_callback _hms_callback, clock_
     timer0_register_callback(clock_handler);
 }
 
+void clock_update_alarm(signed char id, char hour, char minute, bool enabled) {
+    clock_alarm_data_t *alarm = alarms + id;
+    alarm->hour    = hour;
+    alarm->minute  = minute;
+    alarm->snooze  = 0;
+    alarm->enabled = enabled;
+}
+
 signed char clock_set_alarm(signed char id, char hour, char minute) {
     if (id < 0) {
         // Look for an available id
@@ -53,11 +61,7 @@ signed char clock_set_alarm(signed char id, char hour, char minute) {
         }
     }
     if (id > -1 && id < CLOCK_ALARM_MAX) {
-        clock_alarm_data_t *alarm = alarms + id;
-        alarm->hour    = hour;
-        alarm->minute  = minute;
-        alarm->snooze  = 0;
-        alarm->enabled = true;
+        clock_update_alarm(id, hour, minute, true);
         return id;
     } 
 
@@ -154,4 +158,6 @@ bool clock_set_hms(char hour, char minute, char seconds) {
     clock_seconds = seconds;
     clock_minute = minute;
     clock_hours = hour;
+
+    return true;
 }

@@ -92,8 +92,8 @@ void keyboard_init(const char *key_idx, char _repeat_rate_30ms, char _repeat_rat
     repeat_rate_30ms = _repeat_rate_30ms;
     repeat_rate_30ms_fast = _repeat_rate_30ms_fast;
 
-    // Register interrupt handler only on valid shared key_index
-    if (key_index) {
+    // Register interrupt handler only on valid shared key_idx and callback
+    if (key_idx != NULL && callback != NULL) {
         // Define shared display index
         key_index = key_idx;
         

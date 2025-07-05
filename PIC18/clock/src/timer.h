@@ -53,7 +53,8 @@ typedef void(*timer_callback)(void);
 
 void timer0_init(signed char fine_tune);
 void timer_dummy_callback(void);
-void timer0_adjust(signed char fine_tune);
+void timer0_adjust_set(signed char fine_tune);
+signed char timer0_adjust_get(void);
 void timer1_init(void);
 char timer0_register_callback(timer_callback callback);
 char timer1_register_callback(timer_callback callback);

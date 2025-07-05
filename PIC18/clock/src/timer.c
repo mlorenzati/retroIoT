@@ -30,8 +30,12 @@ void timer1_init(void) {
 
 void timer_dummy_callback(void) {}
 
-void timer0_adjust(signed char fine_tune) {
+void timer0_adjust_set(signed char fine_tune) {
 	timer0_tune = fine_tune;
+}
+
+signed char timer0_adjust_get(void) {
+	return timer0_tune;
 }
 
 char timer0_register_callback(timer_callback callback) {

@@ -70,7 +70,7 @@ void display_init(char *idx) {
     }
 
     // Register interrupt handler only on valid display index
-    if (idx) {
+    if (idx != NULL && display_handler != NULL) {
         // Define shared display index
         display_index = idx;
 
@@ -128,7 +128,6 @@ void display_update_action(char new) {
     display_animate_prev_action = display_animate_action;
     display_animate_action = new;
 }
-
 
 void display_event_loop(void) {
     if (!display_tick_event) {
@@ -190,7 +189,7 @@ char display_text_length(const char *data) {
 char display_text(const char* data, char index, char size, bool off_left) {
     // Check index limit
     if (index >= DISPLAY_INDEX_MAX && !off_left) {
-        return;
+        return 0;
     }
 
     // Limit size to maximum
@@ -256,4 +255,8 @@ bool display_scrolling_text(const char* data, char index_start, char index_end,
     display_animation_completed = animation_completed;
 
     return true;
+}
+
+char display_get_animation_status(void) {
+    return display_animate_action;
 }

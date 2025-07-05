@@ -40,7 +40,7 @@
 #define DISPLAY_CHR_D (SEG_G & SEG_B & SEG_E & SEG_D & SEG_C)
 #define DISPLAY_CHR_E (SEG_F & SEG_G & SEG_A & SEG_E & SEG_D)
 #define DISPLAY_CHR_F (SEG_F & SEG_G & SEG_A & SEG_E)
-#define DISPLAY_CHR_G DISPLAY_NUM_6
+#define DISPLAY_CHR_G (SEG_F & SEG_G & SEG_A & SEG_E & SEG_D & SEG_C)
 #define DISPLAY_CHR_H (SEG_F & SEG_G & SEG_B & SEG_E & SEG_C)
 #define DISPLAY_CHR_I DISPLAY_NUM_1
 #define DISPLAY_CHR_J (SEG_B & SEG_E & SEG_D & SEG_C)
@@ -109,5 +109,7 @@ void display_update_index(unsigned char data, char index);
 void display_number_2_7_seg(char number, char index, char size);
 char display_text(const char* data, char index, char size, bool off_left);
 char display_text_length(const char* data);
+void display_update_action(char new);
 bool display_scrolling_text(const char* data, char index_start, char index_end, char speed, bool reverse, bool check_busy, display_callback animation_completed);
+char display_get_animation_status(void);
 #endif
