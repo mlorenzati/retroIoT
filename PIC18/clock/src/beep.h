@@ -10,6 +10,7 @@ typedef void (*beep_callback)(void);
 void beep_init(char divider);
 void beep_update_rate(char divider);
 void beep_play(const char *data, char size, char play_count, beep_callback on_playback_completed);
+void beep_stop(void);
 void beep_event_loop(void);
 
 #endif

@@ -12,6 +12,7 @@ char clock_hours, clock_minute, clock_seconds;
 clock_callback hms_callback = NULL;
 clock_alarm_callback alarm_callback = NULL;
 clock_alarm_data_t alarms[CLOCK_ALARM_MAX] = CLOCK_ALARM_INIT;
+const char snooze_values[CLOCK_SNOOZE_MAX] = {0, 5, 7, 9, 10};
 
 void clock_handler(void) {
     clock_half_second_cnt = !clock_half_second_cnt;
@@ -40,12 +41,16 @@ void clock_init(bool _clock_format_24_12_h, clock_callback _hms_callback, clock_
     timer0_register_callback(clock_handler);
 }
 
-void clock_update_alarm(signed char id, char hour, char minute, bool enabled) {
+bool clock_update_alarm(signed char id, char hour, char minute, bool enabled) {
+    if (id < 0 || id >= CLOCK_ALARM_MAX) {
+        return false;
+    }
     clock_alarm_data_t *alarm = alarms + id;
     alarm->hour    = hour;
     alarm->minute  = minute;
     alarm->snooze  = 0;
     alarm->enabled = enabled;
+    return true;
 }
 
 signed char clock_set_alarm(signed char id, char hour, char minute) {
@@ -68,6 +73,21 @@ signed char clock_set_alarm(signed char id, char hour, char minute) {
     return -1;
 }
 
+bool clock_stop_alarm(signed char id) {
+    if (id < 0 || id >= CLOCK_ALARM_MAX) {
+        return -1;
+    }
+
+    clock_alarm_data_t *alarm = alarms + id;
+    if (!alarm->enabled) {
+        return false;
+    }
+
+    // Will not trigger again until next day
+    alarm->snooze = 0;
+    return true;
+}
+
 signed char clock_unset_alarm(signed char id) {
     if (id < 0 || id >= CLOCK_ALARM_MAX) {
         return -1;
@@ -88,9 +108,23 @@ signed char clock_get_alarm(signed char id, char *hour, char *minute, bool *enab
     return id;
 }
 
+void clock_set_snooze(char *snooze) {
+    for (char i = 0; i < (CLOCK_SNOOZE_MAX - 1); i++) {
+        if (*snooze == snooze_values[i]) {
+            // Found previous snooze value
+            *snooze = snooze_values[i + 1];
+            return;
+        }
+    }
+    // Not found, fallback
+    *snooze = 0;
+}
+
 void clock_event_loop(void) {
     if (clock_half_second_event) {
-        hms_callback(clock_hours, clock_minute, clock_seconds, clock_half_second_event);
+        if (hms_callback) {
+            hms_callback(clock_hours, clock_minute, clock_seconds, clock_half_second_event);
+        }
         clock_half_second_event = false;
         return;
     } else if (!clock_second_event) {
@@ -139,6 +173,9 @@ void clock_event_loop(void) {
             hour -= CLOCK_HOUR_MAX;
         }
         if (hour == clock_hours && minute == clock_minute) {
+            // Set snooze
+            clock_set_snooze(&(alarm->snooze));
+
             // Trigger alarm
             alarm_callback(i);
         }

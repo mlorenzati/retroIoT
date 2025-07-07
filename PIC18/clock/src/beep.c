@@ -56,17 +56,26 @@ void beep_update_rate(char divider) {
     beep_divider = divider;
 }
 
+void beep_stop(void) {
+    beep_playback_completed = NULL;
+    BEEP_PIN_LATCH = 0;
+    beep_play_count = 0;
+    beep_play_size  = 0; 
+}
+
 void beep_play(const char *data, char size, char play_count, beep_callback on_playback_completed) {
     beep_play_data  = data;
     beep_play_size  = size;
-    beep_play_count = play_count;
     beep_play_index = 0;
+    beep_play_count = play_count;
     beep_playback_completed = on_playback_completed;
 }
 
 void beep_event_loop(void) {
-    if (beep_event_completed && beep_playback_completed) {
+    if (beep_event_completed) {
         beep_event_completed = false;
-        beep_playback_completed();
+        if (beep_playback_completed) {
+            beep_playback_completed();
+        }
     }
 }

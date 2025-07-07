@@ -24,9 +24,12 @@ menu_ev_loop_callback menu_event_loop_tasks[] = {
 const char menu_freq_mask[] = { (0), (0x2 - 1), (0x2 - 1), (0x4 - 1), (0x8 - 1) };
 char menu_alarm_config_n = 0;
 char menu_display_selection_index = 0;
+char menu_back_counter = 0;
+char menu_current_alarm_triggered = 0;
 
 // Tunes
-const char blip_fast[2] = {0b10101010, 0b10101010};
+const char wake_one[2] = {0b10000011, 0b11111000};
+const char wake_two[2] = {0b10101010, 0b10101010};
 const char sustained_short[2] = {0b01111111, 0b01111111};
 
 // Clock value update handler
@@ -34,8 +37,18 @@ void menu_on_updated_hms(char clock_hours, char clock_minutes, char clock_second
     if (menu_current_state == MENU_STATE_CLOCK_CONFIG && display_get_animation_status() == DISPLAY_ANIMATE_NONE) {
         display_number_2_7_seg(clock_seconds, 4, 2);
         display_update_segment(SEG_DP, true, menu_display_selection_index);
+        if (!half_second && menu_back_counter > 0) {
+            if (--menu_back_counter == 0) {
+                menu_event_trigger(MENU_EVENT_BACK);
+            }
+        }
         return;
     } else if (menu_current_state != MENU_STATE_CLOCK) {
+        if (!half_second && menu_back_counter > 0) {
+            if (--menu_back_counter == 0) {
+                menu_event_trigger(MENU_EVENT_BACK);
+            }
+        }
         return;
     }
 
@@ -53,8 +66,8 @@ void menu_on_updated_hms(char clock_hours, char clock_minutes, char clock_second
 }
 
 void menu_on_alarm_playblack_completed(void) {
-    menu_state_set(MENU_STATE_CLOCK);
-    menu_event_trigger(MENU_EVENT_GENERIC);
+    beep_play(wake_two, 16, 10, menu_on_alarm_playblack_completed);
+    display_text("ComeOn", 0, 6, false);
 }
 
 // On Alarm triggered handler
@@ -62,6 +75,7 @@ void menu_on_alarm_triggered(char alarm_index) {
     if (menu_current_state != MENU_STATE_CLOCK && menu_current_state != MENU_STATE_ALARM) {
         return;
     }
+    menu_current_alarm_triggered = alarm_index;
     menu_event_trigger(MENU_EVENT_ALARM_TRIGGERED);
     menu_state_set(MENU_STATE_ALARM);
 }
@@ -70,8 +84,10 @@ void menu_on_alarm_triggered(char alarm_index) {
 void menu_on_keyboard_pressed(keyboard_status_t keys) {
     if (keys.key1 == key_released) {
         menu_event_trigger(MENU_EVENT_NEXT_MENU);
+	} else if (keys.key1 == key_repeat) {
+        menu_event_trigger(MENU_EVENT_BACK);
 	}
-    if (keys.key2 == key_released) {
+    if  (keys.key2 == key_released) {
         menu_event_trigger(MENU_EVENT_LEFT);
 	}
 	if (keys.key3 == key_released) {
@@ -84,8 +100,9 @@ void menu_on_keyboard_pressed(keyboard_status_t keys) {
         menu_event_trigger(MENU_EVENT_DOWN);
 	}
 	if (keys.key6 == key_released) {
-        menu_event_trigger(MENU_EVENT_KEY_OK);
+        menu_event_trigger(MENU_EVENT_KEY_STOP);
 	}
+
 }
 
 // Menu Initialization
@@ -212,6 +229,7 @@ void menu_event_loop(void) {
             if (current_event == MENU_EVENT_GENERIC) {
                 const char *configs[CLOCK_ALARM_MAX] = {"Alarm 1", "Alarm 2", "Alarm 3", "Alarm 4"};
                 display_scrolling_text(configs[menu_alarm_config_n], 6, 0, 1, false, false, menu_on_alarm_cfg_message_completed);
+                menu_back_counter = 10;
             } else if (current_event == MENU_EVENT_NEXT_MENU) {
                 menu_event_trigger(MENU_EVENT_GENERIC);
                 if (++menu_alarm_config_n >= CLOCK_ALARM_MAX) {
@@ -230,6 +248,7 @@ void menu_event_loop(void) {
                     }
                 }
                 display_update_segment(SEG_DP, true, menu_display_selection_index);
+                menu_back_counter = 6;
             } else if (current_event == MENU_EVENT_UP || current_event == MENU_EVENT_DOWN) {
                 char hour, minute, second;
                 bool enabled;
@@ -241,17 +260,35 @@ void menu_event_loop(void) {
                 }
                 clock_update_alarm(menu_alarm_config_n, hour, minute, enabled);
                 menu_on_alarm_cfg_message_completed(DISPLAY_ANIMATE_NONE);
+                menu_back_counter = 6;
+            } else if (current_event == MENU_EVENT_BACK) {
+                menu_state_set(MENU_STATE_CLOCK);
             }
             break;
         case MENU_STATE_ALARM:
             if (current_event == MENU_EVENT_ALARM_TRIGGERED) {
-                beep_play(blip_fast, 16, 10, menu_on_alarm_playblack_completed);
-                display_text("WakeUp", 0, 6, false);
-            }
+                display_text("WakeUp", 0, 20, false);
+                beep_play(wake_one, 16, 10, menu_on_alarm_playblack_completed);
+                menu_back_counter = 0;
+            } else if (current_event == MENU_EVENT_KEY_STOP) {
+                beep_stop();
+                clock_stop_alarm(menu_current_alarm_triggered);
+                menu_state_set(MENU_STATE_CLOCK);
+                menu_event_trigger(MENU_EVENT_GENERIC);
+            } else if (current_event == MENU_EVENT_BACK) {
+                beep_stop();
+                menu_state_set(MENU_STATE_CLOCK);
+                menu_event_trigger(MENU_EVENT_GENERIC);
+            } else if (current_event != MENU_EVENT_NONE) {
+                menu_back_counter = 4;
+                beep_stop();
+                display_text("Snooze", 0, 6, false);
+            } 
             break;
         case MENU_STATE_CLOCK_CONFIG:
             if (current_event == MENU_EVENT_GENERIC) {
                 display_scrolling_text("Clock config", 6, 0, 1, false, false, menu_on_clock_cfg_message_completed);
+                menu_back_counter = 10;
             } else if (current_event == MENU_EVENT_NEXT_MENU) {
                 menu_event_trigger(MENU_EVENT_GENERIC);
                 menu_state_set(MENU_STATE_CLOCK_TUNE);
@@ -267,22 +304,28 @@ void menu_event_loop(void) {
                     }
                 }
                 display_update_segment(SEG_DP, true, menu_display_selection_index);
+                menu_back_counter = 6;
             } else if (current_event == MENU_EVENT_UP || current_event == MENU_EVENT_DOWN) {
                 char hour, minute, second;
                 clock_get_hms( &hour, &minute, &second);
                 menu_set_hms(current_event, &hour, &minute, &second);
                 clock_set_hms(hour, minute, second);
                 menu_on_clock_cfg_message_completed(DISPLAY_ANIMATE_NONE);
+                menu_back_counter = 6;
+            } else if (current_event == MENU_EVENT_BACK) {
+                menu_state_set(MENU_STATE_CLOCK);
             }
             break;
         case MENU_STATE_CLOCK_TUNE:
             if (current_event == MENU_EVENT_GENERIC) {
                 display_scrolling_text("Clock Tune", 6, 0, 1, false, false, menu_on_clock_tune_completed);
+                menu_back_counter = 10;
             } else if (current_event == MENU_EVENT_NEXT_MENU) {
                 if (display_get_animation_status() == DISPLAY_ANIMATE_TEXT_FWD) {
                     menu_on_clock_show(DISPLAY_ANIMATE_NONE);
                 } else {
                     display_scrolling_text("Clock Time", 6, 0, 1, false, false, menu_on_clock_show);
+                    menu_back_counter = 0;
                 }
             } else if (current_event == MENU_EVENT_UP || current_event == MENU_EVENT_DOWN) {
                 signed char tune = timer0_adjust_get();
@@ -291,6 +334,9 @@ void menu_event_loop(void) {
                     timer0_adjust_set(tune);
                     menu_on_clock_tune_completed(DISPLAY_ANIMATE_NONE);
                 }
+                menu_back_counter = 6;
+            } else if (current_event == MENU_EVENT_BACK) {
+                menu_state_set(MENU_STATE_CLOCK);
             }
             break;
         case MENU_STATE_NONE:

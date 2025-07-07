@@ -22,6 +22,8 @@ typedef enum {
     MENU_EVENT_DOWN,
     MENU_EVENT_ALARM_TRIGGERED,
     MENU_EVENT_KEY_OK,
+    MENU_EVENT_KEY_STOP,
+    MENU_EVENT_BACK,
     MENU_EVENT_COUNT
 } menu_event;
 
